@@ -1,0 +1,37 @@
+#!/usr/bin/env ruby
+
+$: << File.expand_path(File.dirname(__FILE__) + "/../lib")
+
+require 'rubygems'
+require 'bundler/setup'
+require 'commander/import'
+require "jekyll-ftp-deployer.rb"
+
+# require "irb"
+# IRB.start(__FILE__)
+
+program :version, Jekyll_Ftp_Deployer::VERSION
+program :description, 'Jekyll deploy by FTP.'
+
+command :deploy do |c|
+  c.syntax = 'jfd deploy [options]'
+  c.summary = 'Deploy your site to server via preconfigured ftp settings.'
+  c.description = 'Deploy your site via FTP.'
+  c.option '--username STRING', String, 'Adds custom username'
+  c.action do |args, options|
+    options.default :username => nil
+    command = Jekyll_Ftp_Deployer::Basic.new(options)
+    command.deploy
+  end
+end
+command :check_connection do |c|
+  c.syntax = 'jfd check-connection [options]'
+  c.summary = 'Check server connection for future deploy.'
+  c.description = 'Check server FTP connection.'
+  c.option '--username STRING', String, 'Adds custom username'
+  c.action do |args, options|
+    options.default username: nil
+    command = Jekyll_Ftp_Deployer::Basic.new(options)
+    command.check_connection(true)
+  end
+end
